@@ -1,0 +1,6 @@
+{
+  "GEMINI_API_KEY": "paste-your-gemini-api-key-here",
+  "GEMINI_MODEL": "gemini-2.5-flash",
+  "GROQ_API_KEY": "",
+  "GROQ_MODEL": "llama-4-scout-17b-16e-instruct"
+}
