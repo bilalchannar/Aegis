@@ -748,29 +748,36 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _quick(BuildContext context, String title, IconData icon, int mode) =>
-      Expanded(
-        child: GestureDetector(
-          onTap: () => openPage(context, CheckPage(initialMode: mode)),
-          child: Surface(
-            padding: const EdgeInsets.symmetric(vertical: 17, horizontal: 8),
-            radius: 21,
-            child: Column(
-              children: [
-                Icon(icon, color: context.isDark ? mint : green, size: 22),
-                const SizedBox(height: 12),
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+  Widget _quick(
+    BuildContext context,
+    String title,
+    IconData icon,
+    int mode,
+  ) => Expanded(
+    child: GestureDetector(
+      onTap: () {
+        if (mode == 2 && !ProAccess.instance.allows(FeatureAccess.screenshot)) {
+          openPage(context, const SubscriptionPage());
+          return;
+        }
+        openPage(context, CheckPage(initialMode: mode));
+      },
+      child: Surface(
+        padding: const EdgeInsets.symmetric(vertical: 17, horizontal: 8),
+        radius: 21,
+        child: Column(
+          children: [
+            Icon(icon, color: context.isDark ? mint : green, size: 22),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
             ),
-          ),
+          ],
         ),
-      );
+      ),
+    ),
+  );
   Widget _tool(
     BuildContext context,
     String title,

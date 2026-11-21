@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -680,7 +679,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               ],
             ),
           ),
-          if (kDebugMode) ...[
+          if (ProAccess.simulatorEnabled) ...[
             const SizedBox(height: 16),
             Surface(
               child: Column(

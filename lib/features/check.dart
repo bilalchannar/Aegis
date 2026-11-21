@@ -130,13 +130,17 @@ class _CheckPageState extends State<CheckPage> {
   Future<void> scan() async {
     final app = AppScope.of(context);
     if (mode == 2) {
+      final access = ProAccess.instance;
+      if (!access.allows(FeatureAccess.screenshot)) {
+        openPage(context, const SubscriptionPage());
+        return;
+      }
       if (imageBytes == null) {
         setState(() => error = 'Choose a screenshot before checking it.');
         return;
       }
-      final access = ProAccess.instance;
       final canUseAi =
-          access.allows(FeatureAccess.advancedTextScan) && ApiConfig.hasAi;
+          access.allows(FeatureAccess.screenshot) && ApiConfig.hasAi;
       var aiReserved = false;
       if (canUseAi) {
         aiReserved = await access.reserveAiRequest();
@@ -322,6 +326,11 @@ class _CheckPageState extends State<CheckPage> {
           },
           onValueChanged: (value) {
             if (!busy && value != null) {
+              if (value == 2 &&
+                  !ProAccess.instance.allows(FeatureAccess.screenshot)) {
+                openPage(context, const SubscriptionPage());
+                return;
+              }
               setState(() {
                 mode = value;
                 error = null;
@@ -532,8 +541,8 @@ class _CheckPageState extends State<CheckPage> {
             Expanded(
               child: caption(
                 context,
-                !ProAccess.instance.allows(FeatureAccess.advancedTextScan)
-                    ? 'Free keeps this screenshot on your device. It can show the analysis status, but local OCR is not available; Pro enables supported AI image analysis.'
+                !ProAccess.instance.allows(FeatureAccess.screenshot)
+                    ? 'Screenshot analysis is available with Pro and Ultra.'
                     : ApiConfig.hasAi
                     ? 'This screenshot will be sent to the configured Gemini or Groq vision provider for visible-text and security-content analysis. Provider limits still apply.'
                     : 'The screenshot stays local. Configure an AI provider to analyze visible text and security content.',

@@ -49,7 +49,8 @@ class ProAccess extends ChangeNotifier {
     ),
   };
   static const _storage = FlutterSecureStorage();
-  static const simulatorEnabled = kDebugMode;
+  static const simulatorEnabled =
+      kDebugMode || bool.fromEnvironment('AEGIS_OWNER_TESTING');
   InAppPurchase get store => InAppPurchase.instance;
   StreamSubscription<List<PurchaseDetails>>? _subscription;
   Timer? _restoreTimeout;
@@ -57,7 +58,7 @@ class ProAccess extends ChangeNotifier {
   ProPlan _purchasedPlan = ProPlan.free;
   ProPlan? _debugPlan;
   ProPlan get plan =>
-      kDebugMode ? (_debugPlan ?? _purchasedPlan) : _purchasedPlan;
+      simulatorEnabled ? (_debugPlan ?? _purchasedPlan) : _purchasedPlan;
   PlanConfiguration get limits => PlanConfiguration.values[plan]!;
   bool available = false, busy = false, usageReady = false;
   String? error;
@@ -75,10 +76,12 @@ class ProAccess extends ChangeNotifier {
   bool allows(FeatureAccess feature) {
     if (feature == FeatureAccess.basicText ||
         feature == FeatureAccess.basicUrl ||
-        feature == FeatureAccess.screenshot ||
         feature == FeatureAccess.basicRecovery ||
         feature == FeatureAccess.safetyGuides) {
       return true;
+    }
+    if (feature == FeatureAccess.screenshot) {
+      return plan == ProPlan.pro || plan == ProPlan.ultra;
     }
     return plan == ProPlan.pro || plan == ProPlan.ultra;
   }
@@ -282,7 +285,7 @@ class ProAccess extends ChangeNotifier {
   Future<void> loadUsageForTest() => _loadUsage();
 
   void setDebugPlan(ProPlan value) {
-    if (!kDebugMode) return;
+    if (!simulatorEnabled) return;
     _debugPlan = value;
     notifyListeners();
   }

@@ -227,6 +227,48 @@ class ProfileView extends StatelessWidget {
             ],
           ),
         ),
+        if (ProAccess.simulatorEnabled) ...[
+          const SizedBox(height: 12),
+          Surface(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(CupertinoIcons.wrench_fill, color: green),
+                    const SizedBox(width: 9),
+                    Expanded(
+                      child: eyebrow(context, 'OWNER TESTING · DEBUG ONLY'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                caption(
+                  context,
+                  'Switch plans to test feature access. This temporary override does not create a purchase.',
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: ProPlan.values
+                      .map(
+                        (plan) => OutlinedButton(
+                          onPressed: () =>
+                              ProAccess.instance.setDebugPlan(plan),
+                          child: Text('Test ${ProAccess.names[plan]}'),
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 7),
+                Text(
+                  'Active test plan: ${ProAccess.names[ProAccess.instance.plan]}',
+                ),
+              ],
+            ),
+          ),
+        ],
         if (app.signedIn) ...[
           const SizedBox(height: 18),
           ActionButton(
